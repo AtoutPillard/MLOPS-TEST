@@ -1,12 +1,9 @@
 pipeline {
     agent any
-    environment {
-        BRANCH_NAME = env.GIT_BRANCH
-    }
     stages {
         stage('Building and unit testing'){
             steps{
-                bat "git checkout ${BRANCH_NAME}"
+                bat "git checkout ${env.GIT_BRANCH}"
                 dir('backend_rating') {
                     bat 'pip install -r requirements.txt'
                 }
@@ -16,15 +13,15 @@ pipeline {
             
             steps {
                 bat "git checkout dev"
-                bat "git merge ${BRANCH_NAME}"
+                bat "git merge ${env.GIT_BRANCH}"
                 bat "git push origin dev"
-                bat "git branch -d ${BRANCH_NAME}"
+                bat "git branch -d ${env.GIT_BRANCH}"
             }
         }
         stage('User Acceptance') {
             steps {
                 input {
-                    'Proceed to push to main'
+                    message 'Proceed to push to main'
                 }
             }
         }
